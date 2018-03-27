@@ -2,7 +2,7 @@
 
 # Ubuntu 14.04 LTS (Trusty Tahr)
 FROM ubuntu:14.04
-MAINTAINER Sean Lavine <lavis88@gmail.com>
+MAINTAINER Yang ChenMing <chenming.yang@gmail.com>
 
 # add bitcoind from the official PPA
 RUN apt-get update
