@@ -1,6 +1,85 @@
 # bitcoin-testnet-box
 [![docker pulls](https://img.shields.io/docker/pulls/freewil/bitcoin-testnet-box.svg?style=flat)](https://hub.docker.com/r/freewil/bitcoin-testnet-box/)
 
+## Steps to Build Everything from Scratch (by Yang ChenMing)
+
+1. make sure docker is installed, this repo is cloned to your local disk
+2. bitcoin-testnet-box> docker build -t bitcoin-testnet-box .
+3. docker run -t -i -p 19001:19001 -p 19011:19011 --name bitcoin-testnet bitcoin-testnet-box
+4. Now we are in the command prompt tester@75a8e858fcbb:~/bitcoin-testnet-box$
+5. Verify the nodes are up and running 
+  * bitcoin-cli -datadir=1 getnetworkinfo
+6. Generate some transaction
+  * make generate BLOCKS=200
+7. Verify the transactions are recorded in blocks and values are reflected in wallets
+  * bitcoin-cli -datadir=1 getwalletinfo (search for balance)
+  * bitcoin-cli -datadir=1 getblockchaininfo (search for blocks)
+8. Generate a (new?) address for node2? and tranfer some coin to it
+  * make address2 
+  * make sendfrom1 ADDRESS=2N9...UBE AMOUNT=5 (Address is taken from the printed adress from the previous command)
+  * bitcoin-cli -datadir=1 getwalletinfo
+  * bitcoin-cli -datadir=1 getwalletinfo (note the unconfirmed_balance field)
+  * make generate (we generate one more block)
+  * bitcoin-cli -datadir=1 getwalletinfo (note the balance field)
+9. Stop and restore to the original state
+  * make stop
+  * make clean
+
+
+Sample Content for Makefile
+
+BITCOIND=bitcoind                                                 
+BITCOINGUI=bitcoin-qt                                             
+BITCOINCLI=bitcoin-cli                                            
+B1_FLAGS=                                                         
+B2_FLAGS=                                                         
+B1=-datadir=1 $(B1_FLAGS)                                         
+B2=-datadir=2 $(B2_FLAGS)                                         
+BLOCKS=1                                                          
+ADDRESS=                                                          
+AMOUNT=                                                           
+ACCOUNT=                                                          
+                                                                  
+start:                                                            
+        $(BITCOIND) $(B1) -daemon                                 
+        $(BITCOIND) $(B2) -daemon                                 
+                                                                  
+start-gui:                                                        
+        $(BITCOINGUI) $(B1) &                                     
+        $(BITCOINGUI) $(B2) &                                     
+                                                                  
+generate:                                                         
+        $(BITCOINCLI) $(B1) generate $(BLOCKS)                    
+                                                                  
+getinfo:                                                          
+        $(BITCOINCLI) $(B1) getinfo                               
+        $(BITCOINCLI) $(B2) getinfo                               
+                                                                  
+sendfrom1:                                                        
+        $(BITCOINCLI) $(B1) sendtoaddress $(ADDRESS) $(AMOUNT)    
+                                                                  
+sendfrom2:                                                        
+        $(BITCOINCLI) $(B2) sendtoaddress $(ADDRESS) $(AMOUNT)    
+                                                                  
+address1:                                                         
+        $(BITCOINCLI) $(B1) getnewaddress $(ACCOUNT)              
+                                                                  
+address2:                                                         
+        $(BITCOINCLI) $(B2) getnewaddress $(ACCOUNT)              
+                                                                  
+stop:                                                             
+        $(BITCOINCLI) $(B1) stop                                  
+        $(BITCOINCLI) $(B2) stop                                  
+                                                                  
+clean:                                                            
+        find 1/regtest/* -not -name 'server.*' -delete            
+        find 2/regtest/* -not -name 'server.*' -delete            
+
+
+
+===== ORIGINAL README.md ======
+
+
 Create your own private bitcoin testnet
 
 You must have `bitcoind` and `bitcoin-cli` installed on your system and in the
