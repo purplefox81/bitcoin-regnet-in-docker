@@ -7,20 +7,23 @@
 2. bitcoin-testnet-box> docker build -t bitcoin-testnet-box .
 3. docker run -t -i -p 19001:19001 -p 19011:19011 --name bitcoin-testnet bitcoin-testnet-box
 4. Now we are in the command prompt tester@75a8e858fcbb:~/bitcoin-testnet-box$
-5. Verify the nodes are up and running 
-  * bitcoin-cli -datadir=1 getnetworkinfo
-6. Generate some transaction
-  * make generate BLOCKS=200
-7. Verify the transactions are recorded in blocks and values are reflected in wallets
-  * bitcoin-cli -datadir=1 getwalletinfo (search for balance)
-  * bitcoin-cli -datadir=1 getblockchaininfo (search for blocks)
-8. Generate a (new?) address for node2? and tranfer some coin to it
+5. Start two nodes
+  * make start
+6. Verify the nodes are up and running 
+  * bitcoin-cli -datadir=1 getnetworkinfo (or getinfo)
+  * bitcoin-cli -datadir=2 getnetworkinfo (or getinfo)
+7. Generate some transaction (and enough of them so that there will be a balance in the first wallet)
+  * make generate BLOCKS=100
+8. Verify the transactions are recorded in blocks and values are reflected in wallets
+  * bitcoin-cli -datadir=1 getwalletinfo (look for 'xxx_balance' fields)
+  * bitcoin-cli -datadir=1 getblockchaininfo (look for 'blocks' field)
+9. Generate a new address for node2 and tranfer some coin to it
   * make address2 
-  * make sendfrom1 ADDRESS=2N9...UBE AMOUNT=5 (Address is taken from the printed adress from the previous command)
+  * make sendfrom1 ADDRESS=... AMOUNT=5 (Address is taken from the printed adress from the previous command)
   * bitcoin-cli -datadir=1 getwalletinfo
-  * bitcoin-cli -datadir=1 getwalletinfo (note the unconfirmed_balance field)
-  * make generate (we generate one more block)
-  * bitcoin-cli -datadir=1 getwalletinfo (note the balance field)
+  * bitcoin-cli -datadir=2 getwalletinfo (note the 'unconfirmed_balance' field)
+  * make generate (we generate one more block so that the previous transfer will be confirmed)
+  * bitcoin-cli -datadir=2 getwalletinfo (look for the 'balance' field)
 9. Stop and restore to the original state
   * make stop
   * make clean
