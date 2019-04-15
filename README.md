@@ -1,7 +1,7 @@
 # bitcoin-testnet-box
 [![docker pulls](https://img.shields.io/docker/pulls/freewil/bitcoin-testnet-box.svg?style=flat)](https://hub.docker.com/r/freewil/bitcoin-testnet-box/)
 
-## Steps to Build Everything from Scratch (by Yang ChenMing)
+## Steps to Build Everything from Scratch
 
 1. make sure docker is installed, this repo is cloned to your local disk
 2. bitcoin-testnet-box> docker build -t bitcoin-testnet-box .
